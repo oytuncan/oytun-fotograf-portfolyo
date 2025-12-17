@@ -1,0 +1,29 @@
+name: Fotoğraf Sitesini Güncelle
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodları Çek
+        uses: actions/checkout@v3
+
+      - name: AWS'ye Giriş Yap
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Sadece HTML, CSS ve Resim dosyalarını yüklüyoruz (Terraform dosyalarını yüklemiyoruz)
+      - name: Dosyaları S3'e Yükle
+        run: |
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} --exclude ".git/*" --exclude ".github/*" --exclude "*.tf" --exclude "*.tfstate*" --delete
+
+      - name: CloudFront Önbelleğini Temizle
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_ID }} --paths "/*"

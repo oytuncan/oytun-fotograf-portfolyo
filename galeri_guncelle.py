@@ -1,7 +1,8 @@
 import os
 
 # --- AYARLAR ---
-resim_klasoru = "images"
+resim_klasoru = "images"       # Bilgisayarda dosyaları ARADIĞIMIZ klasör
+html_resim_yolu = "optimized"  # HTML dosyasında GÖRÜNECEK yol (Burası değişti)
 html_dosyasi = "index.html"
 
 # Desteklenen formatlar
@@ -45,7 +46,7 @@ html_bitis = """
 """
 
 def guncelle():
-    print("📸 Fotoğraflar taranıyor...")
+    print(f"📸 '{resim_klasoru}' klasörü taranıyor...")
     
     # 1. Klasördeki resimleri bul
     try:
@@ -56,7 +57,7 @@ def guncelle():
 
     # Sadece resim dosyalarını al ve sırala
     resimler = [f for f in dosyalar if f.lower().endswith(uzantilar)]
-    resimler.sort() # İstersen burayı değiştirebiliriz
+    resimler.sort()
 
     print(f"Toplam {len(resimler)} fotoğraf bulundu.")
 
@@ -64,9 +65,10 @@ def guncelle():
     yeni_icerik = html_baslangic
 
     for resim in resimler:
+        # BURASI DEĞİŞTİ: Artık 'optimized/' klasör yolunu kullanıyor
         blok = f"""
         <div class="photo-item">
-            <img src="{resim_klasoru}/{resim}" loading="lazy" alt="{resim}">
+            <img src="{html_resim_yolu}/{resim}" loading="lazy" alt="{resim}">
         </div>
         """
         yeni_icerik += blok
@@ -77,7 +79,8 @@ def guncelle():
     with open(html_dosyasi, "w", encoding="utf-8") as f:
         f.write(yeni_icerik)
     
-    print(f"✅ {html_dosyasi} başarıyla güncellendi! Siteye yüklemeye hazır.")
+    print(f"✅ {html_dosyasi} başarıyla güncellendi!")
+    print(f"🔗 Resim yolları '{html_resim_yolu}/' olarak ayarlandı.")
 
 if __name__ == "__main__":
     guncelle()
